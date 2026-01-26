@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { getQuestions } from './data';
 import { Question, GameState, UserInput, ElementData } from './types';
@@ -13,7 +12,7 @@ import { GoogleGenAI } from "@google/genai";
 const LEVEL_1_LIMIT = 30;
 const LEVEL_2_LIMIT = 50;
 const GOAL_STARS = 10;
-const APP_VERSION = "v1.2-build-final";
+const APP_VERSION = "v1.3-deploy-fix";
 
 const RutherfordAtom = ({ className = "w-12 h-12", color = "currentColor" }: { className?: string, color?: string }) => (
   <svg 
@@ -72,10 +71,9 @@ function App() {
 
   const startGame = (selectedLevel: 1 | 2) => {
     setLevel(selectedLevel);
-    // Filtrar preguntas según el nivel seleccionado
     const pool = selectedLevel === 1 
       ? allQuestions.slice(0, LEVEL_1_LIMIT) 
-      : allQuestions.slice(0, LEVEL_2_LIMIT); // Nivel 2 incluye los 50 ejercicios
+      : allQuestions.slice(0, LEVEL_2_LIMIT);
     
     setActiveQuestions(shuffleArray(pool));
     setCurrentIndex(0);
@@ -141,17 +139,15 @@ function App() {
     setAiLoading(true);
     setAiExplanation(null);
     try {
-      // Fix: Ensure a fresh GoogleGenAI instance is created for the request.
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-      const promptText = `Explica la estructura atómica de ${currentQuestion.name}: Z=${currentQuestion.z}, A=${currentQuestion.a}, P=${currentQuestion.p}, E=${currentQuestion.e}, N=${currentQuestion.n}, Carga=${currentQuestion.charge}. Sé breve.`;
-      // Fix: Use simple string input for contents as per simplified GenerateContentParameters guidelines.
+      const promptText = `Explica brevemente la estructura de ${currentQuestion.name} (Z=${currentQuestion.z}, A=${currentQuestion.a}, P=${currentQuestion.p}, E=${currentQuestion.e}, N=${currentQuestion.n}, Carga=${currentQuestion.charge}). Sé pedagógico y corto.`;
       const response = await ai.models.generateContent({
         model: 'gemini-3-flash-preview',
         contents: promptText
       });
       setAiExplanation(response.text);
     } catch (error) {
-      setAiExplanation("Error al conectar con la IA.");
+      setAiExplanation("Error al obtener la explicación de la IA.");
     } finally {
       setAiLoading(false);
     }
@@ -182,17 +178,15 @@ function App() {
             <RutherfordAtom className="w-20 h-20" color="#059669" />
           </div>
           <h1 className="text-5xl font-black text-emerald-900 mb-4 tracking-tighter italic">Atom Master</h1>
-          <p className="text-emerald-700/80 mb-10 font-medium">Domina la estructura de átomos e iones.</p>
+          <p className="text-emerald-700/80 mb-10 font-medium">Domina los 50 ejercicios: 30 Neutros y 20 Iones.</p>
           
           <div className="grid grid-cols-1 gap-4 mb-8">
             <button onClick={() => startGame(1)} className="group bg-emerald-500 hover:bg-emerald-600 text-white font-black py-6 rounded-3xl transition-all shadow-xl flex items-center justify-between px-8">
-              <span className="text-lg">Nivel 1: Átomos Neutros</span>
-              {/* Fix: Play icon is now available after adding it to the imports */}
+              <span className="text-lg">Nivel 1: Átomos Neutros (1-30)</span>
               <Play className="group-hover:translate-x-1 transition-transform" />
             </button>
             <button onClick={() => startGame(2)} className="group bg-slate-900 hover:bg-black text-white font-black py-6 rounded-3xl transition-all shadow-xl flex items-center justify-between px-8">
-              <span className="text-lg">Nivel 2: Iones (Carga ≠ 0)</span>
-              {/* Fix: Play icon is now available after adding it to the imports */}
+              <span className="text-lg">Nivel 2: Átomos e Iones (1-50)</span>
               <Play className="group-hover:translate-x-1 transition-transform" />
             </button>
           </div>
@@ -220,7 +214,7 @@ function App() {
             </div>
           </div>
           <button onClick={() => setGameState('MENU')} className="w-full bg-slate-900 text-white font-black py-5 rounded-2xl flex items-center justify-center gap-2 hover:bg-black transition-colors">
-            <RotateCcw size={20} /> JUGAR DE NUEVO
+            <RotateCcw size={20} /> VOLVER AL MENÚ
           </button>
         </div>
       </div>
@@ -235,11 +229,9 @@ function App() {
           <div className="bg-emerald-600 p-3 rounded-2xl shadow-lg shadow-emerald-200"><RutherfordAtom className="w-8 h-8" color="white" /></div>
           <div><h1 className="font-black text-2xl tracking-tight leading-none">Atom Master</h1><span className="text-emerald-600 text-[10px] font-black uppercase tracking-[0.2em]">NIVEL {level}</span></div>
         </div>
-        <div className="flex gap-4">
-          <div className="bg-emerald-50 px-5 py-3 rounded-2xl border border-emerald-100 flex items-center gap-3">
-            <Star size={20} className="text-yellow-400 fill-yellow-400" />
-            <span className="font-black text-emerald-800 text-xl">{stars}</span>
-          </div>
+        <div className="bg-emerald-50 px-5 py-3 rounded-2xl border border-emerald-100 flex items-center gap-3">
+          <Star size={20} className="text-yellow-400 fill-yellow-400" />
+          <span className="font-black text-emerald-800 text-xl">{stars}</span>
         </div>
       </div>
 
@@ -247,10 +239,10 @@ function App() {
         <div className="lg:col-span-1 bg-slate-50 p-6 rounded-[2rem] border border-slate-100 h-fit">
           <h3 className="text-xs font-black uppercase tracking-widest flex items-center gap-2 text-slate-500 mb-6"><BookOpen size={16} /> Fórmulas</h3>
           <div className="space-y-4">
-            <FormulaBadge label="Nº Másico (A)" formula="Z + N" />
-            <FormulaBadge label="Carga (C)" formula="P - E" />
-            <FormulaBadge label="Neutrones (N)" formula="A - Z" />
-            <p className="text-[10px] text-slate-400 font-medium px-2 leading-relaxed italic">Recuerda: En átomos neutros, P = E = Z.</p>
+            <FormulaBadge label="A" formula="Z + N" />
+            <FormulaBadge label="Carga" formula="P - E" />
+            <FormulaBadge label="N" formula="A - Z" />
+            <p className="text-[10px] text-slate-400 font-medium px-2 italic">Neutros: P = E = Z.</p>
           </div>
         </div>
 
@@ -288,24 +280,24 @@ function App() {
 
           <div className="mt-8 space-y-4">
             {feedback === 'correct' && (
-              <div className="bg-emerald-500 text-white p-6 rounded-[2rem] flex items-center justify-between shadow-xl animate-bounce-short">
-                <div className="flex items-center gap-4 font-black text-lg"><Check size={32} /> ¡EXCELENTE TRABAJO!</div>
-                <button onClick={nextQuestion} className="bg-white text-emerald-600 font-black py-3 px-8 rounded-2xl hover:bg-emerald-50 transition-colors">SIGUIENTE</button>
+              <div className="bg-emerald-500 text-white p-6 rounded-[2rem] flex items-center justify-between shadow-xl">
+                <div className="flex items-center gap-4 font-black text-lg"><Check size={32} /> ¡MUY BIEN!</div>
+                <button onClick={nextQuestion} className="bg-white text-emerald-600 font-black py-3 px-8 rounded-2xl hover:bg-emerald-50 transition-colors">CONTINUAR</button>
               </div>
             )}
             {feedback === 'incorrect' && (
               <div className="space-y-4">
                 <div className="bg-rose-600 text-white p-6 rounded-[2rem] flex items-center justify-between shadow-xl">
-                  <div className="flex items-center gap-4 font-black text-lg"><X size={32} /> REVISA TUS CÁLCULOS</div>
+                  <div className="flex items-center gap-4 font-black text-lg"><X size={32} /> HAY ERRORES</div>
                   <button onClick={askGemini} disabled={aiLoading} className="bg-white/20 hover:bg-white/30 text-white font-black py-3 px-8 rounded-2xl transition-all flex items-center gap-2">
                     {aiLoading ? <Loader2 className="animate-spin" /> : <Sparkles size={18} />} AYUDA IA
                   </button>
                 </div>
-                {aiExplanation && <div className="bg-slate-50 p-6 rounded-[2rem] border-2 border-slate-100 text-slate-700 font-medium italic animate-fade-in">{aiExplanation}</div>}
+                {aiExplanation && <div className="bg-slate-50 p-6 rounded-[2rem] border-2 border-slate-100 text-slate-700 font-medium italic">{aiExplanation}</div>}
               </div>
             )}
             {feedback === null && (
-              <button onClick={checkAnswer} className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-6 rounded-3xl shadow-xl transition-all active:scale-95 text-xl tracking-tight">COMPROBAR RESPUESTA</button>
+              <button onClick={checkAnswer} className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-6 rounded-3xl shadow-xl transition-all active:scale-95 text-xl tracking-tight">COMPROBAR</button>
             )}
           </div>
         </div>
