@@ -126,7 +126,7 @@ function App() {
     setFeedback(null);
     setUserInput(createEmptyInput());
     setGameState('PLAYING');
-    setShowInfo(selectedLevel === 1);
+    setShowInfo(false); // Ocultar guía por defecto
   };
 
   const handleInputChange = (field: keyof UserInput, value: string) => {
@@ -229,7 +229,7 @@ function App() {
   if (gameState === 'MENU') {
     return (
       <div className="min-h-screen bg-gradient-to-br from-emerald-700 via-emerald-600 to-teal-800 flex items-center justify-center p-6">
-        <div className="bg-white rounded-[2.5rem] shadow-2xl p-10 max-w-lg w-full text-center border-8 border-white/20 glass-card relative overflow-hidden">
+        <div className="bg-white rounded-[2.5rem] shadow-2xl p-10 max-w-2xl w-full text-center border-8 border-white/20 glass-card relative overflow-hidden">
           <div className="absolute top-0 right-0 p-4 opacity-10">
              <RutherfordAtom className="w-32 h-32" color="#10b981" />
           </div>
@@ -241,20 +241,17 @@ function App() {
           <h1 className="text-4xl font-black text-emerald-900 mb-2 tracking-tight">Atom Master</h1>
           <p className="text-emerald-700/70 mb-10 text-sm font-medium">Domina la estructura atómica y consigue 10 estrellas.</p>
           
-          <div className="space-y-4">
-            <button onClick={() => startGame(1)} className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-5 px-8 rounded-2xl transition-all flex items-center justify-between group shadow-xl shadow-emerald-200/50 hover:-translate-y-1">
-              <div className="text-left">
-                <div className="text-xl">Nivel 1</div>
-                <div className="text-emerald-100 text-xs font-normal">Átomos Neutros (Carga 0)</div>
-              </div>
-              <ChevronRight className="w-8 h-8 text-emerald-200 group-hover:text-white group-hover:translate-x-1 transition-all" />
+          {/* Menu forzado en horizontal con grid-cols-2 */}
+          <div className="grid grid-cols-2 gap-3 sm:gap-6">
+            <button onClick={() => startGame(1)} className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-6 px-3 sm:px-6 rounded-2xl transition-all flex flex-col items-center justify-center gap-2 group shadow-xl shadow-emerald-200/50 hover:-translate-y-1">
+              <div className="text-lg sm:text-xl">Nivel 1</div>
+              <div className="text-emerald-100 text-[9px] sm:text-[10px] font-normal uppercase tracking-widest">Neutros</div>
+              <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-200 group-hover:text-white group-hover:translate-x-1 transition-all mt-2" />
             </button>
-            <button onClick={() => startGame(2)} className="w-full bg-teal-800 hover:bg-teal-900 text-white font-bold py-5 px-8 rounded-2xl transition-all flex items-center justify-between group shadow-xl shadow-teal-900/20 hover:-translate-y-1">
-              <div className="text-left">
-                <div className="text-xl">Nivel 2</div>
-                <div className="text-teal-300 text-xs font-normal">Iones y Átomos Neutros</div>
-              </div>
-              <ChevronRight className="w-8 h-8 text-teal-400 group-hover:text-white group-hover:translate-x-1 transition-all" />
+            <button onClick={() => startGame(2)} className="w-full bg-teal-800 hover:bg-teal-900 text-white font-bold py-6 px-3 sm:px-6 rounded-2xl transition-all flex flex-col items-center justify-center gap-2 group shadow-xl shadow-teal-900/20 hover:-translate-y-1">
+              <div className="text-lg sm:text-xl">Nivel 2</div>
+              <div className="text-teal-300 text-[9px] sm:text-[10px] font-normal uppercase tracking-widest">Iones</div>
+              <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 text-teal-400 group-hover:text-white group-hover:translate-x-1 transition-all mt-2" />
             </button>
           </div>
           <div className="mt-8 pt-6 border-t border-emerald-50 text-[10px] text-emerald-600/50 font-bold uppercase tracking-widest">
@@ -304,6 +301,7 @@ function App() {
                onClick={() => setGameState('MENU')}
                className="p-3 rounded-2xl bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all active:scale-90"
              >
+               <span className="sr-only">Volver al Menú</span>
                <ArrowLeft size={20} />
              </button>
              <div className="flex items-center gap-3 border-l-2 border-emerald-100 pl-4">
@@ -339,8 +337,8 @@ function App() {
                   <BookOpen size={16} className="text-emerald-500" />
                   Machete de Fórmulas
                 </h3>
-                <button onClick={() => setShowInfo(!showInfo)} className="text-xs text-emerald-600 font-bold hover:underline">
-                  {showInfo ? 'Ocultar Guía' : 'Ver Guía Completa'}
+                <button onClick={() => setShowInfo(!showInfo)} className="text-xs bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full border border-emerald-100 font-bold hover:bg-emerald-100 transition-colors">
+                  {showInfo ? 'Ocultar Guía ✕' : 'Mostrar Guía 💡'}
                 </button>
               </div>
               <div className="flex flex-wrap gap-3">
@@ -351,7 +349,7 @@ function App() {
                  <FormulaBadge label="Electrones" formula="E = P - C" />
               </div>
               {showInfo && (
-                <div className="mt-5 pt-5 border-t border-slate-100 animate-in slide-in-from-top-2">
+                <div className="mt-5 pt-5 border-t border-slate-100 animate-in slide-in-from-top-2 duration-300">
                   <Glossary />
                 </div>
               )}

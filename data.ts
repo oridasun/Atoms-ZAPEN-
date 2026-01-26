@@ -1,8 +1,8 @@
+
 import { ElementData, Question } from './types';
 
-// The full correct dataset based on Table 1
+// Los datos base se mantienen (basados en la Tabla 1 del usuario)
 const completeData: ElementData[] = [
-  // 1-30 Neutral Atoms
   { id: 1, symbol: 'H', name: 'Hidrógeno', z: 1, a: 1, p: 1, e: 1, n: 0, charge: '0' },
   { id: 2, symbol: 'He', name: 'Helio', z: 2, a: 4, p: 2, e: 2, n: 2, charge: '0' },
   { id: 3, symbol: 'Li', name: 'Litio', z: 3, a: 7, p: 3, e: 3, n: 4, charge: '0' },
@@ -33,7 +33,7 @@ const completeData: ElementData[] = [
   { id: 28, symbol: 'Ni', name: 'Níquel', z: 28, a: 59, p: 28, e: 28, n: 31, charge: '0' },
   { id: 29, symbol: 'Cu', name: 'Cobre', z: 29, a: 64, p: 29, e: 29, n: 35, charge: '0' },
   { id: 30, symbol: 'Zn', name: 'Zinc', z: 30, a: 65, p: 30, e: 30, n: 35, charge: '0' },
-  // 31-50 Ions
+  // Iones (31-50)
   { id: 31, symbol: 'Li⁺', name: 'Catión Litio', z: 3, a: 7, p: 3, e: 2, n: 4, charge: '1+' },
   { id: 32, symbol: 'Na⁺', name: 'Catión Sodio', z: 11, a: 23, p: 11, e: 10, n: 12, charge: '1+' },
   { id: 33, symbol: 'K⁺', name: 'Catión Potasio', z: 19, a: 39, p: 19, e: 18, n: 20, charge: '1+' },
@@ -56,69 +56,66 @@ const completeData: ElementData[] = [
   { id: 50, symbol: 'H⁻', name: 'Anión Hidruro', z: 1, a: 1, p: 1, e: 2, n: 0, charge: '1-' },
 ];
 
-// Helper to create questions with holes based on Table 2
 export const getQuestions = (): Question[] => {
   return completeData.map((item, index) => {
-    // Map Table 2 holes (approximated from the provided HTML structure)
-    // index is 0-based, so row 1 is index 0
     let hidden: (keyof ElementData)[] = [];
+    const i = index + 1;
 
-    const i = index + 1; // 1-based index for easier mapping
-
-    // Explicit mapping based on provided HTML table holes
+    // Aplicamos la lógica de la "Tabla 2" para ocultar más información
     switch (i) {
-      case 1: hidden = ['name', 'a', 'p']; break;
-      case 2: hidden = ['symbol', 'z', 'e']; break;
-      case 3: hidden = ['p', 'e', 'n']; break;
-      case 4: hidden = ['symbol', 'name', 'a', 'charge']; break;
-      case 5: hidden = ['z', 'p', 'charge']; break;
-      case 6: hidden = ['symbol', 'a', 'e']; break;
-      case 7: hidden = ['name', 'z', 'n']; break;
-      case 8: hidden = ['symbol', 'p', 'e', 'charge']; break;
-      case 9: hidden = ['name', 'z', 'n']; break;
-      case 10: hidden = ['symbol', 'a', 'p']; break;
-      case 11: hidden = ['name', 'p', 'e']; break;
-      case 12: hidden = ['symbol', 'z', 'a']; break;
-      case 13: hidden = ['name', 'e', 'n']; break;
-      case 14: hidden = ['symbol', 'z', 'p', 'charge']; break;
-      case 15: hidden = ['name', 'a', 'charge']; break;
-      case 16: hidden = ['symbol', 'z', 'p']; break;
-      case 17: hidden = ['z', 'a', 'e']; break;
-      case 18: hidden = ['symbol', 'n', 'charge']; break;
-      case 19: hidden = ['name', 'z', 'n']; break;
-      case 20: hidden = ['symbol', 'a', 'e']; break;
-      case 21: hidden = ['name', 'z', 'p']; break;
-      case 22: hidden = ['symbol', 'e', 'n']; break;
-      case 23: hidden = ['z', 'p', 'charge']; break;
-      case 24: hidden = ['symbol', 'name', 'charge']; break;
-      case 25: hidden = ['name', 'a', 'e']; break;
-      case 26: hidden = ['symbol', 'z', 'n']; break;
-      case 27: hidden = ['name', 'p', 'e']; break;
-      case 28: hidden = ['symbol', 'z', 'n']; break;
-      case 29: hidden = ['name', 'a', 'p']; break;
-      case 30: hidden = ['symbol', 'z', 'e']; break;
+      // Neutros (1-30)
+      case 1: hidden = ['name', 'z', 'a', 'charge']; break;
+      case 2: hidden = ['symbol', 'z', 'e', 'n']; break;
+      case 3: hidden = ['name', 'a', 'p', 'e']; break;
+      case 4: hidden = ['symbol', 'z', 'a', 'charge']; break;
+      case 5: hidden = ['name', 'z', 'p', 'e']; break;
+      case 6: hidden = ['symbol', 'a', 'p', 'charge']; break;
+      case 7: hidden = ['name', 'z', 'a', 'e']; break;
+      case 8: hidden = ['symbol', 'z', 'p', 'e']; break;
+      case 9: hidden = ['name', 'z', 'n', 'charge']; break;
+      case 10: hidden = ['symbol', 'p', 'e', 'n']; break;
+      case 11: hidden = ['name', 'z', 'a', 'e']; break;
+      case 12: hidden = ['symbol', 'z', 'n', 'charge']; break;
+      case 13: hidden = ['name', 'a', 'p', 'e']; break;
+      case 14: hidden = ['symbol', 'z', 'a', 'charge']; break;
+      case 15: hidden = ['name', 'z', 'p', 'e']; break;
+      case 16: hidden = ['symbol', 'a', 'p', 'charge']; break;
+      case 17: hidden = ['name', 'z', 'a', 'e']; break;
+      case 18: hidden = ['symbol', 'z', 'e', 'n']; break;
+      case 19: hidden = ['name', 'a', 'p', 'e']; break;
+      case 20: hidden = ['symbol', 'z', 'a', 'charge']; break;
+      case 21: hidden = ['name', 'z', 'p', 'e']; break;
+      case 22: hidden = ['symbol', 'a', 'p', 'charge']; break;
+      case 23: hidden = ['name', 'z', 'a', 'e']; break;
+      case 24: hidden = ['symbol', 'z', 'n', 'charge']; break;
+      case 25: hidden = ['name', 'a', 'p', 'e']; break;
+      case 26: hidden = ['symbol', 'z', 'a', 'charge']; break;
+      case 27: hidden = ['name', 'z', 'p', 'e']; break;
+      case 28: hidden = ['symbol', 'a', 'p', 'charge']; break;
+      case 29: hidden = ['name', 'z', 'a', 'e']; break;
+      case 30: hidden = ['symbol', 'z', 'n', 'charge']; break;
 
-      // Ions (31-50)
-      case 31: hidden = ['symbol', 'name', 'a', 'p', 'charge']; break;
-      case 32: hidden = ['name', 'p', 'e']; break;
-      case 33: hidden = ['symbol', 'z', 'n', 'charge']; break;
-      case 34: hidden = ['symbol', 'a', 'p']; break;
-      case 35: hidden = ['name', 'z', 'e', 'charge']; break;
-      case 36: hidden = ['symbol', 'z', 'n', 'charge']; break;
-      case 37: hidden = ['name', 'a', 'p']; break;
-      case 38: hidden = ['symbol', 'p', 'e']; break;
-      case 39: hidden = ['name', 'z', 'e']; break;
-      case 40: hidden = ['symbol', 'a', 'p', 'charge']; break;
-      case 41: hidden = ['name', 'z', 'p', 'charge']; break;
-      case 42: hidden = ['symbol', 'a', 'p', 'charge']; break;
-      case 43: hidden = ['symbol', 'name', 'z', 'charge']; break;
-      case 44: hidden = ['symbol', 'a', 'charge']; break;
-      case 45: hidden = ['name', 'z', 'p']; break;
-      case 46: hidden = ['symbol', 'p', 'n', 'charge']; break;
-      case 47: hidden = ['name', 'z', 'a']; break; // Se2- row
-      case 48: hidden = ['symbol', 'p', 'n', 'charge']; break;
-      case 49: hidden = ['symbol', 'z', 'p', 'e']; break;
-      case 50: hidden = ['symbol', 'a', 'n', 'charge']; break;
+      // Iones (31-50)
+      case 31: hidden = ['name', 'a', 'p', 'charge']; break;
+      case 32: hidden = ['symbol', 'z', 'e', 'n']; break;
+      case 33: hidden = ['name', 'z', 'a', 'charge']; break;
+      case 34: hidden = ['symbol', 'a', 'p', 'e']; break;
+      case 35: hidden = ['name', 'z', 'n', 'charge']; break;
+      case 36: hidden = ['symbol', 'z', 'e', 'n']; break;
+      case 37: hidden = ['name', 'a', 'p', 'charge']; break;
+      case 38: hidden = ['symbol', 'z', 'n', 'charge']; break;
+      case 39: hidden = ['name', 'p', 'e', 'charge']; break;
+      case 40: hidden = ['symbol', 'p', 'n', 'charge']; break;
+      case 41: hidden = ['name', 'z', 'a', 'charge']; break;
+      case 42: hidden = ['symbol', 'p', 'n', 'charge']; break;
+      case 43: hidden = ['name', 'z', 'a', 'charge']; break;
+      case 44: hidden = ['symbol', 'p', 'e']; break;
+      case 45: hidden = ['name', 'z', 'n', 'charge']; break;
+      case 46: hidden = ['symbol', 'a', 'p', 'charge']; break;
+      case 47: hidden = ['name', 'z', 'e', 'n']; break;
+      case 48: hidden = ['symbol', 'a', 'p', 'charge']; break;
+      case 49: hidden = ['name', 'z', 'n', 'charge']; break;
+      case 50: hidden = ['symbol', 'p', 'n', 'charge']; break;
       
       default: hidden = ['p', 'e', 'n']; break;
     }
