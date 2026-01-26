@@ -1,7 +1,6 @@
 
 import { ElementData, Question } from './types';
 
-// Los datos base se mantienen (basados en la Tabla 1 del usuario)
 const completeData: ElementData[] = [
   { id: 1, symbol: 'H', name: 'Hidrógeno', z: 1, a: 1, p: 1, e: 1, n: 0, charge: '0' },
   { id: 2, symbol: 'He', name: 'Helio', z: 2, a: 4, p: 2, e: 2, n: 2, charge: '0' },
@@ -61,63 +60,28 @@ export const getQuestions = (): Question[] => {
     let hidden: (keyof ElementData)[] = [];
     const i = index + 1;
 
-    // Aplicamos la lógica de la "Tabla 2" para ocultar más información
-    switch (i) {
-      // Neutros (1-30)
-      case 1: hidden = ['name', 'z', 'a', 'charge']; break;
-      case 2: hidden = ['symbol', 'z', 'e', 'n']; break;
-      case 3: hidden = ['name', 'a', 'p', 'e']; break;
-      case 4: hidden = ['symbol', 'z', 'a', 'charge']; break;
-      case 5: hidden = ['name', 'z', 'p', 'e']; break;
-      case 6: hidden = ['symbol', 'a', 'p', 'charge']; break;
-      case 7: hidden = ['name', 'z', 'a', 'e']; break;
-      case 8: hidden = ['symbol', 'z', 'p', 'e']; break;
-      case 9: hidden = ['name', 'z', 'n', 'charge']; break;
-      case 10: hidden = ['symbol', 'p', 'e', 'n']; break;
-      case 11: hidden = ['name', 'z', 'a', 'e']; break;
-      case 12: hidden = ['symbol', 'z', 'n', 'charge']; break;
-      case 13: hidden = ['name', 'a', 'p', 'e']; break;
-      case 14: hidden = ['symbol', 'z', 'a', 'charge']; break;
-      case 15: hidden = ['name', 'z', 'p', 'e']; break;
-      case 16: hidden = ['symbol', 'a', 'p', 'charge']; break;
-      case 17: hidden = ['name', 'z', 'a', 'e']; break;
-      case 18: hidden = ['symbol', 'z', 'e', 'n']; break;
-      case 19: hidden = ['name', 'a', 'p', 'e']; break;
-      case 20: hidden = ['symbol', 'z', 'a', 'charge']; break;
-      case 21: hidden = ['name', 'z', 'p', 'e']; break;
-      case 22: hidden = ['symbol', 'a', 'p', 'charge']; break;
-      case 23: hidden = ['name', 'z', 'a', 'e']; break;
-      case 24: hidden = ['symbol', 'z', 'n', 'charge']; break;
-      case 25: hidden = ['name', 'a', 'p', 'e']; break;
-      case 26: hidden = ['symbol', 'z', 'a', 'charge']; break;
-      case 27: hidden = ['name', 'z', 'p', 'e']; break;
-      case 28: hidden = ['symbol', 'a', 'p', 'charge']; break;
-      case 29: hidden = ['name', 'z', 'a', 'e']; break;
-      case 30: hidden = ['symbol', 'z', 'n', 'charge']; break;
-
-      // Iones (31-50)
-      case 31: hidden = ['name', 'a', 'p', 'charge']; break;
-      case 32: hidden = ['symbol', 'z', 'e', 'n']; break;
-      case 33: hidden = ['name', 'z', 'a', 'charge']; break;
-      case 34: hidden = ['symbol', 'a', 'p', 'e']; break;
-      case 35: hidden = ['name', 'z', 'n', 'charge']; break;
-      case 36: hidden = ['symbol', 'z', 'e', 'n']; break;
-      case 37: hidden = ['name', 'a', 'p', 'charge']; break;
-      case 38: hidden = ['symbol', 'z', 'n', 'charge']; break;
-      case 39: hidden = ['name', 'p', 'e', 'charge']; break;
-      case 40: hidden = ['symbol', 'p', 'n', 'charge']; break;
-      case 41: hidden = ['name', 'z', 'a', 'charge']; break;
-      case 42: hidden = ['symbol', 'p', 'n', 'charge']; break;
-      case 43: hidden = ['name', 'z', 'a', 'charge']; break;
-      case 44: hidden = ['symbol', 'p', 'e']; break;
-      case 45: hidden = ['name', 'z', 'n', 'charge']; break;
-      case 46: hidden = ['symbol', 'a', 'p', 'charge']; break;
-      case 47: hidden = ['name', 'z', 'e', 'n']; break;
-      case 48: hidden = ['symbol', 'a', 'p', 'charge']; break;
-      case 49: hidden = ['name', 'z', 'n', 'charge']; break;
-      case 50: hidden = ['symbol', 'p', 'n', 'charge']; break;
-      
-      default: hidden = ['p', 'e', 'n']; break;
+    // Lógica "Tabla 2": Ocultamos 4 o 5 campos estratégicos para forzar el razonamiento matemático
+    if (i <= 30) {
+      // Neutros: Ocultamos combinaciones que requieren A=Z+N o Carga=0 explícita
+      const patterns = [
+        ['name', 'z', 'a', 'charge'],
+        ['symbol', 'z', 'e', 'n'],
+        ['name', 'a', 'p', 'e', 'charge'],
+        ['symbol', 'z', 'a', 'p', 'charge'],
+        ['name', 'z', 'p', 'e', 'n'],
+        ['symbol', 'a', 'p', 'n', 'charge']
+      ];
+      hidden = patterns[index % patterns.length] as (keyof ElementData)[];
+    } else {
+      // Iones: Ocultamos combinaciones que requieren Carga=P-E y A=P+N
+      const patterns = [
+        ['name', 'a', 'p', 'charge', 'e'],
+        ['symbol', 'z', 'e', 'n', 'charge'],
+        ['name', 'z', 'a', 'charge', 'p'],
+        ['symbol', 'a', 'p', 'e', 'n'],
+        ['name', 'z', 'n', 'charge', 'e']
+      ];
+      hidden = patterns[index % patterns.length] as (keyof ElementData)[];
     }
 
     return { ...item, hiddenFields: hidden };

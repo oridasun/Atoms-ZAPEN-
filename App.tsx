@@ -126,7 +126,7 @@ function App() {
     setFeedback(null);
     setUserInput(createEmptyInput());
     setGameState('PLAYING');
-    setShowInfo(false); // Ocultar guía por defecto
+    setShowInfo(false); // Ocultar guía por defecto para que el alumno la despliegue
   };
 
   const handleInputChange = (field: keyof UserInput, value: string) => {
@@ -241,17 +241,16 @@ function App() {
           <h1 className="text-4xl font-black text-emerald-900 mb-2 tracking-tight">Atom Master</h1>
           <p className="text-emerald-700/70 mb-10 text-sm font-medium">Domina la estructura atómica y consigue 10 estrellas.</p>
           
-          {/* Menu forzado en horizontal con grid-cols-2 */}
-          <div className="grid grid-cols-2 gap-3 sm:gap-6">
-            <button onClick={() => startGame(1)} className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-6 px-3 sm:px-6 rounded-2xl transition-all flex flex-col items-center justify-center gap-2 group shadow-xl shadow-emerald-200/50 hover:-translate-y-1">
-              <div className="text-lg sm:text-xl">Nivel 1</div>
-              <div className="text-emerald-100 text-[9px] sm:text-[10px] font-normal uppercase tracking-widest">Neutros</div>
-              <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-200 group-hover:text-white group-hover:translate-x-1 transition-all mt-2" />
+          <div className="grid grid-cols-2 gap-4">
+            <button onClick={() => startGame(1)} className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-6 px-4 rounded-2xl transition-all flex flex-col items-center justify-center gap-2 group shadow-xl shadow-emerald-200/50 hover:-translate-y-1">
+              <div className="text-xl">Nivel 1</div>
+              <div className="text-emerald-100 text-[10px] font-normal uppercase tracking-widest">Neutros</div>
+              <ChevronRight className="w-6 h-6 text-emerald-200 group-hover:text-white group-hover:translate-x-1 transition-all mt-2" />
             </button>
-            <button onClick={() => startGame(2)} className="w-full bg-teal-800 hover:bg-teal-900 text-white font-bold py-6 px-3 sm:px-6 rounded-2xl transition-all flex flex-col items-center justify-center gap-2 group shadow-xl shadow-teal-900/20 hover:-translate-y-1">
-              <div className="text-lg sm:text-xl">Nivel 2</div>
-              <div className="text-teal-300 text-[9px] sm:text-[10px] font-normal uppercase tracking-widest">Iones</div>
-              <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 text-teal-400 group-hover:text-white group-hover:translate-x-1 transition-all mt-2" />
+            <button onClick={() => startGame(2)} className="w-full bg-teal-800 hover:bg-teal-900 text-white font-bold py-6 px-4 rounded-2xl transition-all flex flex-col items-center justify-center gap-2 group shadow-xl shadow-teal-900/20 hover:-translate-y-1">
+              <div className="text-xl">Nivel 2</div>
+              <div className="text-teal-300 text-[10px] font-normal uppercase tracking-widest">Iones</div>
+              <ChevronRight className="w-6 h-6 text-teal-400 group-hover:text-white group-hover:translate-x-1 transition-all mt-2" />
             </button>
           </div>
           <div className="mt-8 pt-6 border-t border-emerald-50 text-[10px] text-emerald-600/50 font-bold uppercase tracking-widest">
