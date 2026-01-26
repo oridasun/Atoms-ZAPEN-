@@ -1,0 +1,5 @@
+{
+  "name": "Atoms (ZAPEN)",
+  "description": "An interactive chemistry exercise for completing atomic structure tables. Includes two levels: Neutral Atoms and Ions.",
+  "requestFramePermissions": []
+}
