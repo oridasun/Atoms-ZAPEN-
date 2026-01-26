@@ -12,7 +12,7 @@ import { GoogleGenAI } from "@google/genai";
 const LEVEL_1_LIMIT = 30;
 const LEVEL_2_LIMIT = 50;
 const GOAL_STARS = 10;
-const APP_VERSION = "v1.3-deploy-fix";
+const APP_VERSION = "v1.4-stable-refresh";
 
 const RutherfordAtom = ({ className = "w-12 h-12", color = "currentColor" }: { className?: string, color?: string }) => (
   <svg 
@@ -44,9 +44,9 @@ function shuffleArray<T>(array: T[]): T[] {
 }
 
 const FormulaBadge = ({ label, formula }: { label: string, formula: string }) => (
-  <div className="bg-white/50 border border-emerald-100 rounded-lg p-2 flex flex-col items-center justify-center min-w-[80px]">
-    <span className="text-[9px] font-bold text-emerald-600 uppercase mb-1">{label}</span>
-    <span className="text-xs font-mono font-bold text-emerald-900">{formula}</span>
+  <div className="bg-white/60 border border-emerald-100 rounded-xl p-3 flex flex-col items-center justify-center min-w-[90px] shadow-sm">
+    <span className="text-[10px] font-black text-emerald-600 uppercase mb-1">{label}</span>
+    <span className="text-sm font-mono font-bold text-emerald-900">{formula}</span>
   </div>
 );
 
@@ -123,7 +123,7 @@ function App() {
       setStars(s => {
         const next = s + 1;
         if (next === GOAL_STARS) {
-          confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+          confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#10b981', '#34d399', '#ffffff'] });
         }
         return next;
       });
@@ -140,14 +140,14 @@ function App() {
     setAiExplanation(null);
     try {
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-      const promptText = `Explica brevemente la estructura de ${currentQuestion.name} (Z=${currentQuestion.z}, A=${currentQuestion.a}, P=${currentQuestion.p}, E=${currentQuestion.e}, N=${currentQuestion.n}, Carga=${currentQuestion.charge}). Sé pedagógico y corto.`;
+      const promptText = `Explica la estructura del ${currentQuestion.name} (Z=${currentQuestion.z}, A=${currentQuestion.a}, P=${currentQuestion.p}, E=${currentQuestion.e}, N=${currentQuestion.n}, Carga=${currentQuestion.charge}). Responde en una o dos frases claras para un estudiante.`;
       const response = await ai.models.generateContent({
         model: 'gemini-3-flash-preview',
         contents: promptText
       });
       setAiExplanation(response.text);
     } catch (error) {
-      setAiExplanation("Error al obtener la explicación de la IA.");
+      setAiExplanation("La IA está descansando. ¡Repasa las fórmulas básicas!");
     } finally {
       setAiLoading(false);
     }
@@ -172,26 +172,29 @@ function App() {
 
   if (gameState === 'MENU') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-emerald-800 via-emerald-600 to-teal-900 flex flex-col items-center justify-center p-6 text-center">
-        <div className="bg-white rounded-[3rem] shadow-2xl p-12 max-w-xl w-full glass-card border-8 border-white/20">
+      <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-emerald-900 to-slate-900 flex flex-col items-center justify-center p-6 text-center">
+        <div className="bg-white rounded-[3rem] shadow-2xl p-12 max-w-xl w-full glass-card border-8 border-white/10 relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-emerald-500 to-indigo-500"></div>
           <div className="flex justify-center mb-8">
-            <RutherfordAtom className="w-20 h-20" color="#059669" />
+            <RutherfordAtom className="w-24 h-24" color="#059669" />
           </div>
-          <h1 className="text-5xl font-black text-emerald-900 mb-4 tracking-tighter italic">Atom Master</h1>
-          <p className="text-emerald-700/80 mb-10 font-medium">Domina los 50 ejercicios: 30 Neutros y 20 Iones.</p>
+          <h1 className="text-5xl font-black text-slate-900 mb-4 tracking-tighter italic">Atom Master</h1>
+          <p className="text-slate-600 mb-10 font-medium px-4">Pon a prueba tus conocimientos sobre la estructura de átomos e iones.</p>
           
-          <div className="grid grid-cols-1 gap-4 mb-8">
-            <button onClick={() => startGame(1)} className="group bg-emerald-500 hover:bg-emerald-600 text-white font-black py-6 rounded-3xl transition-all shadow-xl flex items-center justify-between px-8">
-              <span className="text-lg">Nivel 1: Átomos Neutros (1-30)</span>
-              <Play className="group-hover:translate-x-1 transition-transform" />
+          <div className="grid grid-cols-1 gap-4 mb-10">
+            <button onClick={() => startGame(1)} className="group bg-emerald-600 hover:bg-emerald-700 text-white font-black py-6 rounded-3xl transition-all shadow-xl flex items-center justify-between px-8 hover:-translate-y-1">
+              <span className="text-lg">Nivel 1: Átomos Neutros</span>
+              <Play className="group-hover:translate-x-1 transition-transform" fill="white" />
             </button>
-            <button onClick={() => startGame(2)} className="group bg-slate-900 hover:bg-black text-white font-black py-6 rounded-3xl transition-all shadow-xl flex items-center justify-between px-8">
-              <span className="text-lg">Nivel 2: Átomos e Iones (1-50)</span>
-              <Play className="group-hover:translate-x-1 transition-transform" />
+            <button onClick={() => startGame(2)} className="group bg-slate-900 hover:bg-black text-white font-black py-6 rounded-3xl transition-all shadow-xl flex items-center justify-between px-8 hover:-translate-y-1">
+              <span className="text-lg">Nivel 2: Átomos e Iones</span>
+              <Play className="group-hover:translate-x-1 transition-transform" fill="white" />
             </button>
           </div>
           
-          <div className="text-[10px] text-emerald-900/40 font-bold uppercase tracking-widest">{APP_VERSION}</div>
+          <div className="inline-block bg-slate-100 px-4 py-1.5 rounded-full text-[10px] text-slate-500 font-black uppercase tracking-[0.2em]">
+            VERSION {APP_VERSION}
+          </div>
         </div>
       </div>
     );
@@ -201,20 +204,21 @@ function App() {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
         <div className="bg-white rounded-[3rem] shadow-2xl p-12 max-w-md w-full text-center border-4 border-emerald-100">
-          <Trophy className="w-24 h-24 text-yellow-500 mx-auto mb-6 drop-shadow-lg" />
-          <h2 className="text-4xl font-black mb-2 text-slate-900 tracking-tight">¡LO LOGRASTE!</h2>
+          <Trophy className="w-24 h-24 text-yellow-500 mx-auto mb-6 drop-shadow-xl" />
+          <h2 className="text-4xl font-black mb-2 text-slate-900 tracking-tight">¡ENHORABUENA!</h2>
+          <p className="text-slate-500 mb-8 font-medium">Has completado el reto con éxito.</p>
           <div className="flex justify-center gap-4 mb-10">
-            <div className="bg-emerald-50 px-6 py-4 rounded-3xl">
-              <div className="text-3xl font-black text-emerald-700">{stars}</div>
-              <div className="text-[10px] uppercase font-bold text-emerald-400 tracking-widest">Estrellas</div>
+            <div className="bg-emerald-50 px-8 py-5 rounded-3xl border border-emerald-100">
+              <div className="text-4xl font-black text-emerald-700">{stars}</div>
+              <div className="text-[10px] uppercase font-bold text-emerald-400 tracking-widest mt-1">Éxitos</div>
             </div>
-            <div className="bg-rose-50 px-6 py-4 rounded-3xl">
-              <div className="text-3xl font-black text-rose-700">{failures}</div>
-              <div className="text-[10px] uppercase font-bold text-rose-400 tracking-widest">Errores</div>
+            <div className="bg-rose-50 px-8 py-5 rounded-3xl border border-rose-100">
+              <div className="text-4xl font-black text-rose-700">{failures}</div>
+              <div className="text-[10px] uppercase font-bold text-rose-400 tracking-widest mt-1">Errores</div>
             </div>
           </div>
-          <button onClick={() => setGameState('MENU')} className="w-full bg-slate-900 text-white font-black py-5 rounded-2xl flex items-center justify-center gap-2 hover:bg-black transition-colors">
-            <RotateCcw size={20} /> VOLVER AL MENÚ
+          <button onClick={() => setGameState('MENU')} className="w-full bg-slate-900 text-white font-black py-6 rounded-3xl flex items-center justify-center gap-3 hover:bg-black transition-all hover:scale-[1.02] active:scale-95 shadow-lg">
+            <RotateCcw size={22} /> REPETIR DESAFÍO
           </button>
         </div>
       </div>
@@ -222,48 +226,49 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-white py-8 px-4 max-w-5xl mx-auto flex flex-col">
-      <div className="flex justify-between items-center mb-10">
-        <button onClick={() => setGameState('MENU')} className="p-4 rounded-2xl bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors"><ArrowLeft size={24} /></button>
+    <div className="min-h-screen bg-white py-10 px-4 max-w-6xl mx-auto flex flex-col">
+      <div className="flex justify-between items-center mb-12">
+        <button onClick={() => setGameState('MENU')} className="p-4 rounded-2xl bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors shadow-sm"><ArrowLeft size={24} /></button>
         <div className="flex items-center gap-4">
-          <div className="bg-emerald-600 p-3 rounded-2xl shadow-lg shadow-emerald-200"><RutherfordAtom className="w-8 h-8" color="white" /></div>
-          <div><h1 className="font-black text-2xl tracking-tight leading-none">Atom Master</h1><span className="text-emerald-600 text-[10px] font-black uppercase tracking-[0.2em]">NIVEL {level}</span></div>
+          <div className="bg-emerald-600 p-3.5 rounded-2xl shadow-lg shadow-emerald-100"><RutherfordAtom className="w-8 h-8" color="white" /></div>
+          <div><h1 className="font-black text-2xl tracking-tight leading-none text-slate-900">Atom Master</h1><span className="text-emerald-600 text-[11px] font-black uppercase tracking-[0.25em]">NIVEL {level}</span></div>
         </div>
-        <div className="bg-emerald-50 px-5 py-3 rounded-2xl border border-emerald-100 flex items-center gap-3">
-          <Star size={20} className="text-yellow-400 fill-yellow-400" />
-          <span className="font-black text-emerald-800 text-xl">{stars}</span>
+        <div className="bg-emerald-50 px-6 py-3.5 rounded-2xl border border-emerald-100 flex items-center gap-3 shadow-sm">
+          <Star size={24} className="text-yellow-400 fill-yellow-400" />
+          <span className="font-black text-emerald-800 text-2xl">{stars}<span className="text-emerald-200 text-lg ml-1">/10</span></span>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-10">
-        <div className="lg:col-span-1 bg-slate-50 p-6 rounded-[2rem] border border-slate-100 h-fit">
-          <h3 className="text-xs font-black uppercase tracking-widest flex items-center gap-2 text-slate-500 mb-6"><BookOpen size={16} /> Fórmulas</h3>
-          <div className="space-y-4">
-            <FormulaBadge label="A" formula="Z + N" />
-            <FormulaBadge label="Carga" formula="P - E" />
-            <FormulaBadge label="N" formula="A - Z" />
-            <p className="text-[10px] text-slate-400 font-medium px-2 italic">Neutros: P = E = Z.</p>
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 mb-12">
+        <div className="lg:col-span-1 space-y-4">
+          <div className="bg-slate-50 p-6 rounded-[2.5rem] border border-slate-100">
+            <h3 className="text-[11px] font-black uppercase tracking-widest flex items-center gap-2 text-slate-400 mb-6"><BookOpen size={16} /> RECUERDA</h3>
+            <div className="space-y-4">
+              <FormulaBadge label="Masa (A)" formula="Z + N" />
+              <FormulaBadge label="Carga (C)" formula="P - E" />
+              <FormulaBadge label="Neutros" formula="P = E = Z" />
+            </div>
           </div>
         </div>
 
-        <div className="lg:col-span-3">
-          <div className="bg-white rounded-[2.5rem] shadow-2xl border-4 border-slate-50 overflow-hidden">
+        <div className="lg:col-span-4">
+          <div className="bg-white rounded-[3rem] shadow-2xl border-[6px] border-slate-50 overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-center border-collapse">
                 <thead>
-                  <tr className="bg-slate-900 text-white h-16">
-                    <th className="px-4 text-[11px] font-black uppercase tracking-widest">Nombre</th>
-                    <th className="px-4 text-[11px] font-black uppercase tracking-widest">Símbolo</th>
-                    <th className="px-4 text-[11px] font-black uppercase tracking-widest">Z</th>
-                    <th className="px-4 text-[11px] font-black uppercase tracking-widest">A</th>
-                    <th className="px-4 text-[11px] font-black uppercase tracking-widest">P</th>
-                    <th className="px-4 text-[11px] font-black uppercase tracking-widest">E</th>
-                    <th className="px-4 text-[11px] font-black uppercase tracking-widest">N</th>
-                    <th className="px-4 text-[11px] font-black uppercase tracking-widest">Carga</th>
+                  <tr className="bg-slate-900 text-white h-20">
+                    <th className="px-6 text-[12px] font-black uppercase tracking-widest border-r border-white/5">Nombre</th>
+                    <th className="px-6 text-[12px] font-black uppercase tracking-widest border-r border-white/5">Símbolo</th>
+                    <th className="px-4 text-[12px] font-black uppercase tracking-widest border-r border-white/5">Z</th>
+                    <th className="px-4 text-[12px] font-black uppercase tracking-widest border-r border-white/5">A</th>
+                    <th className="px-4 text-[12px] font-black uppercase tracking-widest border-r border-white/5">P</th>
+                    <th className="px-4 text-[12px] font-black uppercase tracking-widest border-r border-white/5">E</th>
+                    <th className="px-4 text-[12px] font-black uppercase tracking-widest border-r border-white/5">N</th>
+                    <th className="px-6 text-[12px] font-black uppercase tracking-widest">Carga</th>
                   </tr>
                 </thead>
                 <tbody key={currentIndex}>
-                  <tr className="h-28">
+                  <tr className="h-32">
                     <DataCell field="name" question={currentQuestion} userInput={userInput} onChange={handleInputChange} isResult={feedback !== null} />
                     <DataCell field="symbol" question={currentQuestion} userInput={userInput} onChange={handleInputChange} isResult={feedback !== null} isSymbol />
                     <DataCell field="z" question={currentQuestion} userInput={userInput} onChange={handleInputChange} isResult={feedback !== null} />
@@ -278,33 +283,35 @@ function App() {
             </div>
           </div>
 
-          <div className="mt-8 space-y-4">
+          <div className="mt-10 space-y-4">
             {feedback === 'correct' && (
-              <div className="bg-emerald-500 text-white p-6 rounded-[2rem] flex items-center justify-between shadow-xl">
-                <div className="flex items-center gap-4 font-black text-lg"><Check size={32} /> ¡MUY BIEN!</div>
-                <button onClick={nextQuestion} className="bg-white text-emerald-600 font-black py-3 px-8 rounded-2xl hover:bg-emerald-50 transition-colors">CONTINUAR</button>
+              <div className="bg-emerald-600 text-white p-7 rounded-[2.5rem] flex items-center justify-between shadow-2xl shadow-emerald-100 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div className="flex items-center gap-5 font-black text-xl"><Check size={40} strokeWidth={3} /> ¡EXCELENTE! HAS GANADO 1 ESTRELLA</div>
+                <button onClick={nextQuestion} className="bg-white text-emerald-700 font-black py-4 px-10 rounded-2xl hover:bg-emerald-50 transition-all active:scale-95 shadow-md">SIGUIENTE ELEMENTO</button>
               </div>
             )}
             {feedback === 'incorrect' && (
               <div className="space-y-4">
-                <div className="bg-rose-600 text-white p-6 rounded-[2rem] flex items-center justify-between shadow-xl">
-                  <div className="flex items-center gap-4 font-black text-lg"><X size={32} /> HAY ERRORES</div>
-                  <button onClick={askGemini} disabled={aiLoading} className="bg-white/20 hover:bg-white/30 text-white font-black py-3 px-8 rounded-2xl transition-all flex items-center gap-2">
-                    {aiLoading ? <Loader2 className="animate-spin" /> : <Sparkles size={18} />} AYUDA IA
+                <div className="bg-rose-600 text-white p-7 rounded-[2.5rem] flex items-center justify-between shadow-2xl shadow-rose-100 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                  <div className="flex items-center gap-5 font-black text-xl"><X size={40} strokeWidth={3} /> HAY ALGÚN ERROR...</div>
+                  <button onClick={askGemini} disabled={aiLoading} className="bg-white/20 hover:bg-white/30 text-white font-black py-4 px-10 rounded-2xl transition-all flex items-center gap-3 active:scale-95">
+                    {aiLoading ? <Loader2 className="animate-spin" size={24} /> : <Sparkles size={24} />} AYUDA DE IA
                   </button>
                 </div>
-                {aiExplanation && <div className="bg-slate-50 p-6 rounded-[2rem] border-2 border-slate-100 text-slate-700 font-medium italic">{aiExplanation}</div>}
+                {aiExplanation && <div className="bg-indigo-50 p-8 rounded-[2.5rem] border-2 border-indigo-100 text-indigo-900 font-semibold italic text-lg leading-relaxed shadow-inner">{aiExplanation}</div>}
               </div>
             )}
             {feedback === null && (
-              <button onClick={checkAnswer} className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-6 rounded-3xl shadow-xl transition-all active:scale-95 text-xl tracking-tight">COMPROBAR</button>
+              <button onClick={checkAnswer} className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black py-8 rounded-[2.5rem] shadow-2xl shadow-indigo-100 transition-all active:scale-[0.98] text-2xl tracking-tight">VERIFICAR RESPUESTAS</button>
             )}
           </div>
         </div>
       </div>
       
-      <div className="mt-auto pt-8 text-center text-[10px] text-slate-300 font-bold uppercase tracking-[0.3em]">
-        QUÍMICA INTERACTIVA • {APP_VERSION}
+      <div className="mt-auto pt-10 text-center">
+        <div className="inline-flex items-center gap-3 text-[11px] text-slate-300 font-black uppercase tracking-[0.4em]">
+          QUÍMICA INTERACTIVA <span className="text-slate-200 text-base">•</span> {APP_VERSION}
+        </div>
       </div>
     </div>
   );
@@ -329,28 +336,28 @@ const DataCell = ({ field, question, userInput, onChange, isResult, isSymbol }: 
 
   if (!isHidden) {
     return (
-      <td className="px-4 border-r border-slate-100 last:border-0 bg-white">
+      <td className="px-6 border-r border-slate-50 last:border-0 bg-white">
         {isSymbol ? (
-          <div className="inline-flex items-center">
+          <div className="inline-flex items-center scale-110">
             <div className="flex flex-col text-[10px] mr-1 text-right font-black text-slate-400">
               <span>{question.a}</span><span>{question.z}</span>
             </div>
-            <span className="text-3xl font-black text-slate-900">{question.symbol.replace(/[\d\+\-]+/g, '')}</span>
-            <span className="text-[11px] font-black text-emerald-500 self-start ml-0.5">{question.charge === '0' ? '' : question.charge}</span>
+            <span className="text-4xl font-black text-slate-900">{question.symbol.replace(/[\d\+\-]+/g, '')}</span>
+            <span className="text-[12px] font-black text-emerald-600 self-start ml-0.5 mt-1">{question.charge === '0' ? '' : question.charge}</span>
           </div>
         ) : (
-          <span className="text-xl font-bold text-slate-900">{correctValue === '0' ? '0' : correctValue}</span>
+          <span className="text-2xl font-black text-slate-800">{correctValue === '0' ? '0' : correctValue}</span>
         )}
       </td>
     );
   }
 
   return (
-    <td className={`px-4 border-r border-slate-100 last:border-0 ${isResult ? 'bg-white' : 'bg-emerald-50/20'}`}>
+    <td className={`px-4 border-r border-slate-50 last:border-0 ${isResult ? 'bg-white' : 'bg-indigo-50/20'}`}>
       {isResult ? (
-        <div className="flex flex-col items-center justify-center">
-          <span className={`text-xl font-black ${isError ? 'text-rose-500 line-through decoration-4' : 'text-emerald-600'}`}>{userValue || '?'}</span>
-          {isError && <span className="text-xs font-black text-emerald-600 mt-1">{correctValue}</span>}
+        <div className="flex flex-col items-center justify-center py-2">
+          <span className={`text-2xl font-black ${isError ? 'text-rose-500 line-through decoration-[3px]' : 'text-emerald-600'}`}>{userValue || '?'}</span>
+          {isError && <span className="text-[12px] font-black text-emerald-600 mt-2 bg-emerald-50 px-3 py-1 rounded-lg">{correctValue === '0' ? '0' : correctValue}</span>}
         </div>
       ) : (
         <input
@@ -358,7 +365,7 @@ const DataCell = ({ field, question, userInput, onChange, isResult, isSymbol }: 
           value={userValue}
           onChange={(e) => onChange(field, e.target.value)}
           placeholder="?"
-          className="w-full text-center bg-white border-4 border-emerald-100 rounded-2xl py-3 focus:border-emerald-500 outline-none font-black text-xl text-emerald-900 transition-all placeholder-emerald-100"
+          className="w-full text-center bg-white border-[3px] border-indigo-100 rounded-2xl py-4 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none font-black text-2xl text-indigo-900 transition-all placeholder-indigo-200"
         />
       )}
     </td>
