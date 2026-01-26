@@ -14,7 +14,6 @@ const LEVEL_1_LIMIT = 30;
 const LEVEL_2_LIMIT = 50;
 const GOAL_STARS = 10;
 
-// Componente de Átomo de Rutherford personalizado
 const RutherfordAtom = ({ className = "w-12 h-12", color = "currentColor" }: { className?: string, color?: string }) => (
   <svg 
     viewBox="0 0 24 24" 
@@ -25,15 +24,10 @@ const RutherfordAtom = ({ className = "w-12 h-12", color = "currentColor" }: { c
     strokeLinejoin="round" 
     className={className}
   >
-    {/* Nucleus */}
     <circle cx="12" cy="12" r="2.5" fill={color} />
-    
-    {/* Orbits */}
     <ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(0 12 12)" />
     <ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)" />
     <ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(120 12 12)" />
-    
-    {/* Electrons */}
     <circle cx="22" cy="12" r="0.8" fill={color} />
     <circle cx="7" cy="16.3" r="0.8" fill={color} />
     <circle cx="7" cy="7.7" r="0.8" fill={color} />
@@ -193,13 +187,13 @@ function App() {
     setAiExplanation(null);
     try {
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-      const prompt = `Actúa como un profesor de química experto y amable. Explica brevemente la estructura atómica del siguiente elemento/ion: 
+      const promptText = `Actúa como un profesor de química experto y amable. Explica brevemente la estructura atómica del siguiente elemento/ion: 
       Nombre: ${currentQuestion.name}, Símbolo: ${currentQuestion.symbol}, Z: ${currentQuestion.z}, A: ${currentQuestion.a}, Protones: ${currentQuestion.p}, Electrones: ${currentQuestion.e}, Neutrones: ${currentQuestion.n}, Carga: ${currentQuestion.charge}. 
       Responde en 3-4 frases cortas explicando por qué tiene esos valores de electrones y neutrones basándote en la carga y el número másico. Usa un tono motivador.`;
       
       const response = await ai.models.generateContent({
         model: 'gemini-3-flash-preview',
-        contents: prompt
+        contents: [{ parts: [{ text: promptText }] }]
       });
       setAiExplanation(response.text);
     } catch (error) {
@@ -304,7 +298,6 @@ function App() {
 
   return (
     <div className="min-h-screen bg-white flex flex-col items-center justify-start py-6 px-4">
-      {/* Header Bar */}
       <div className="w-full max-w-5xl flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
          <div className="flex items-center gap-4">
              <button 
@@ -338,7 +331,6 @@ function App() {
          </div>
       </div>
 
-      {/* Formulas & Concepts Section */}
       <div className="w-full max-w-5xl mb-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
         <div className="lg:col-span-8">
            <div className="bg-white p-5 rounded-3xl shadow-sm border border-slate-200">
@@ -376,7 +368,6 @@ function App() {
         </div>
       </div>
 
-      {/* Main Game Table */}
       <div className="w-full max-w-5xl bg-white rounded-[2rem] shadow-2xl border-4 border-slate-100 overflow-hidden mb-6">
           <div className="overflow-x-auto">
             <div className="min-w-[850px] grid grid-cols-[60px_1.5fr_1fr_0.8fr_0.8fr_0.8fr_0.8fr_0.8fr_1fr]">
@@ -407,7 +398,6 @@ function App() {
           </div>
       </div>
 
-      {/* Feedback & Actions */}
       <div className="w-full max-w-5xl flex flex-col md:flex-row justify-between items-start gap-6">
            <div className="flex-1 space-y-4 w-full">
              {feedback === 'correct' && (
@@ -510,10 +500,8 @@ const Cell: React.FC<CellProps> = ({ field, question, userInput, onChange, isRes
       const nu = u.trim().toLowerCase();
       const nc = c.trim().toLowerCase();
       if ((nu === '0' || nu === 'neutro') && nc === '0') return true;
-      // Comparar normalizados
       const normU = nu.replace(/[^0-9+-]/g, '');
       const normC = nc.replace(/[^0-9+-]/g, '');
-      // Manejar '1+' vs '+1'
       const sortStr = (s: string) => s.split('').sort().join('');
       return sortStr(normU) === sortStr(normC);
     }
@@ -521,7 +509,6 @@ const Cell: React.FC<CellProps> = ({ field, question, userInput, onChange, isRes
   };
 
   const isError = isResult && isHidden && !checkEquality(userValue, correctValue);
-
   const containerClasses = "p-4 flex items-center justify-center border-r border-slate-50 last:border-r-0 h-24 relative transition-colors";
 
   if (!isHidden) {
