@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { getQuestions } from './data';
 import { Question, GameState, UserInput, ElementData } from './types';
@@ -126,7 +125,7 @@ function App() {
     setFeedback(null);
     setUserInput(createEmptyInput());
     setGameState('PLAYING');
-    setShowInfo(false); // Ocultar guía por defecto
+    setShowInfo(false);
   };
 
   const handleInputChange = (field: keyof UserInput, value: string) => {
@@ -187,9 +186,7 @@ function App() {
     setAiExplanation(null);
     try {
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-      const promptText = `Actúa como un profesor de química experto y amable. Explica brevemente la estructura atómica del siguiente elemento/ion: 
-      Nombre: ${currentQuestion.name}, Símbolo: ${currentQuestion.symbol}, Z: ${currentQuestion.z}, A: ${currentQuestion.a}, Protones: ${currentQuestion.p}, Electrones: ${currentQuestion.e}, Neutrones: ${currentQuestion.n}, Carga: ${currentQuestion.charge}. 
-      Responde en 3-4 frases cortas explicando por qué tiene esos valores de electrones y neutrones basándote en la carga y el número másico. Usa un tono motivador.`;
+      const promptText = `Actúa como un profesor de química experto y amable. Explica brevemente la estructura atómica del siguiente elemento: ${currentQuestion.name}. P=${currentQuestion.p}, E=${currentQuestion.e}, N=${currentQuestion.n}, Carga=${currentQuestion.charge}. Responde en 2-3 frases cortas.`;
       
       const response = await ai.models.generateContent({
         model: 'gemini-3-flash-preview',
@@ -197,7 +194,7 @@ function App() {
       });
       setAiExplanation(response.text);
     } catch (error) {
-      setAiExplanation("Lo siento, no pude conectar con mi cerebro de IA en este momento. ¡Revisa las fórmulas!");
+      setAiExplanation("No pude conectar con mi cerebro de IA. ¡Revisa las fórmulas!");
     } finally {
       setAiLoading(false);
     }
@@ -228,33 +225,20 @@ function App() {
 
   if (gameState === 'MENU') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-emerald-700 via-emerald-600 to-teal-800 flex items-center justify-center p-6">
-        <div className="bg-white rounded-[2.5rem] shadow-2xl p-10 max-w-2xl w-full text-center border-8 border-white/20 glass-card relative overflow-hidden">
-          <div className="absolute top-0 right-0 p-4 opacity-10">
-             <RutherfordAtom className="w-32 h-32" color="#10b981" />
-          </div>
+      <div className="min-h-screen bg-gradient-to-br from-emerald-700 via-emerald-600 to-teal-800 flex items-center justify-center p-6 text-center">
+        <div className="bg-white rounded-[2.5rem] shadow-2xl p-10 max-w-2xl w-full border-8 border-white/20 glass-card">
           <div className="flex justify-center mb-8">
-            <div className="bg-emerald-100 p-6 rounded-3xl rotate-3 shadow-inner">
-              <RutherfordAtom className="w-16 h-16" color="#059669" />
-            </div>
+            <RutherfordAtom className="w-16 h-16" color="#059669" />
           </div>
           <h1 className="text-4xl font-black text-emerald-900 mb-2 tracking-tight">Atom Master</h1>
           <p className="text-emerald-700/70 mb-10 text-sm font-medium">Domina la estructura atómica y consigue 10 estrellas.</p>
-          
-          <div className="grid grid-cols-2 gap-3 sm:gap-6">
-            <button onClick={() => startGame(1)} className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-6 px-3 sm:px-6 rounded-2xl transition-all flex flex-col items-center justify-center gap-2 group shadow-xl shadow-emerald-200/50 hover:-translate-y-1">
-              <div className="text-lg sm:text-xl">Nivel 1</div>
-              <div className="text-emerald-100 text-[9px] sm:text-[10px] font-normal uppercase tracking-widest">Neutros</div>
-              <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-200 group-hover:text-white group-hover:translate-x-1 transition-all mt-2" />
+          <div className="grid grid-cols-2 gap-4">
+            <button onClick={() => startGame(1)} className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-6 rounded-2xl transition-all shadow-xl">
+              Nivel 1 (Neutros)
             </button>
-            <button onClick={() => startGame(2)} className="w-full bg-teal-800 hover:bg-teal-900 text-white font-bold py-6 px-3 sm:px-6 rounded-2xl transition-all flex flex-col items-center justify-center gap-2 group shadow-xl shadow-teal-900/20 hover:-translate-y-1">
-              <div className="text-lg sm:text-xl">Nivel 2</div>
-              <div className="text-teal-300 text-[9px] sm:text-[10px] font-normal uppercase tracking-widest">Iones</div>
-              <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 text-teal-400 group-hover:text-white group-hover:translate-x-1 transition-all mt-2" />
+            <button onClick={() => startGame(2)} className="bg-teal-800 hover:bg-teal-900 text-white font-bold py-6 rounded-2xl transition-all shadow-xl">
+              Nivel 2 (Iones)
             </button>
-          </div>
-          <div className="mt-8 pt-6 border-t border-emerald-50 text-[10px] text-emerald-600/50 font-bold uppercase tracking-widest">
-            Aprende Química con IA
           </div>
         </div>
       </div>
@@ -264,28 +248,21 @@ function App() {
   if (gameState === 'SUMMARY') {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
-        <div className="bg-white rounded-[3rem] shadow-2xl p-12 max-w-md w-full text-center border-4 border-emerald-100 animate-in zoom-in-95 duration-500">
-          <div className="flex justify-center mb-8 relative">
-            <div className="absolute inset-0 bg-yellow-400/20 blur-3xl rounded-full scale-150"></div>
-            <div className="bg-yellow-50 p-8 rounded-full border-4 border-yellow-100 relative">
-                <Trophy className="w-20 h-20 text-yellow-500" />
-            </div>
-          </div>
+        <div className="bg-white rounded-[3rem] shadow-2xl p-12 max-w-md w-full text-center border-4 border-emerald-100">
+          <Trophy className="w-20 h-20 text-yellow-500 mx-auto mb-6" />
           <h2 className="text-3xl font-black mb-2 text-slate-900">¡ESPECTACULAR!</h2>
-          <p className="text-emerald-600 font-bold mb-10 uppercase tracking-[0.2em] text-xs">Has dominado los átomos</p>
           <div className="grid grid-cols-2 gap-4 mb-10">
-            <div className="bg-emerald-50 rounded-3xl p-6 border border-emerald-100">
-                <div className="text-4xl font-black text-emerald-700 mb-1">{stars}</div>
-                <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Estrellas</div>
+            <div className="bg-emerald-50 rounded-2xl p-4">
+              <div className="text-3xl font-black text-emerald-700">{stars}</div>
+              <div className="text-[10px] uppercase font-bold text-emerald-400">Estrellas</div>
             </div>
-            <div className="bg-rose-50 rounded-3xl p-6 border border-rose-100">
-                <div className="text-4xl font-black text-rose-700 mb-1">{failures}</div>
-                <div className="text-[10px] font-bold text-rose-400 uppercase tracking-widest">Errores</div>
+            <div className="bg-rose-50 rounded-2xl p-4">
+              <div className="text-3xl font-black text-rose-700">{failures}</div>
+              <div className="text-[10px] uppercase font-bold text-rose-400">Errores</div>
             </div>
           </div>
-          <button onClick={() => setGameState('MENU')} className="w-full bg-slate-900 hover:bg-black text-white font-black py-5 rounded-2xl flex items-center justify-center gap-3 transition-all shadow-2xl hover:scale-[1.02] active:scale-95">
-            <RotateCcw size={22} />
-            REINTENTAR
+          <button onClick={() => setGameState('MENU')} className="w-full bg-slate-900 text-white font-black py-5 rounded-2xl flex items-center justify-center gap-2">
+            <RotateCcw size={20} /> REINTENTAR
           </button>
         </div>
       </div>
@@ -293,188 +270,110 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-white flex flex-col items-center justify-start py-6 px-4">
-      <div className="w-full max-w-5xl flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
-         <div className="flex items-center gap-4">
-             <button 
-               onClick={() => setGameState('MENU')}
-               className="p-3 rounded-2xl bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all active:scale-90"
-             >
-               <span className="sr-only">Volver al Menú</span>
-               <ArrowLeft size={20} />
-             </button>
-             <div className="flex items-center gap-3 border-l-2 border-emerald-100 pl-4">
-                 <div className="bg-emerald-600 p-2 rounded-xl text-white">
-                    <RutherfordAtom className="w-6 h-6" color="white" />
-                 </div>
-                 <div>
-                    <h1 className="text-slate-900 font-black text-xl leading-none">Atom Master</h1>
-                    <div className="text-emerald-600 text-[10px] font-black tracking-widest uppercase mt-1">MODO: NIVEL {level}</div>
-                 </div>
-             </div>
-         </div>
-
-         <div className="flex items-center gap-3 bg-slate-50 p-2 rounded-3xl border border-slate-100">
-             <div className="flex gap-1 items-center px-4 py-2 bg-white rounded-2xl shadow-sm border border-slate-200">
-                 <span className="text-[10px] uppercase tracking-widest text-slate-400 font-black mr-2">Puntos</span>
-                 {[...Array(GOAL_STARS)].map((_, i) => (
-                    <Star key={i} size={16} className={`${i < stars ? 'text-yellow-400 fill-yellow-400 animate-star' : 'text-slate-200'}`} />
-                 ))}
-             </div>
-             <div className="px-4 py-2 bg-rose-50 rounded-2xl border border-rose-100 flex items-center gap-3">
-                 <span className="text-[10px] uppercase tracking-widest text-rose-400 font-black">Fallos</span>
-                 <span className="text-xl font-black text-rose-600">{failures}</span>
-             </div>
-         </div>
-      </div>
-
-      <div className="w-full max-w-5xl mb-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <div className="lg:col-span-8">
-           <div className="bg-white p-5 rounded-3xl shadow-sm border border-slate-200">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-xs font-black text-slate-800 uppercase flex items-center gap-2">
-                  <BookOpen size={16} className="text-emerald-500" />
-                  Machete de Fórmulas
-                </h3>
-                <button onClick={() => setShowInfo(!showInfo)} className="text-xs bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full border border-emerald-100 font-bold hover:bg-emerald-100 transition-colors">
-                  {showInfo ? 'Ocultar Guía ✕' : 'Mostrar Guía 💡'}
-                </button>
-              </div>
-              <div className="flex flex-wrap gap-3">
-                 <FormulaBadge label="Nº Másico" formula="A = Z + N" />
-                 <FormulaBadge label="Nº Atómico" formula="Z = P" />
-                 <FormulaBadge label="Carga" formula="C = P - E" />
-                 <FormulaBadge label="Neutrones" formula="N = A - Z" />
-                 <FormulaBadge label="Electrones" formula="E = P - C" />
-              </div>
-              {showInfo && (
-                <div className="mt-5 pt-5 border-t border-slate-100 animate-in slide-in-from-top-2 duration-300">
-                  <Glossary />
-                </div>
-              )}
-           </div>
+    <div className="min-h-screen bg-white py-6 px-4 max-w-5xl mx-auto">
+      <div className="flex justify-between items-center mb-6">
+        <button onClick={() => setGameState('MENU')} className="p-3 rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200"><ArrowLeft size={20} /></button>
+        <div className="flex items-center gap-3">
+          <div className="bg-emerald-600 p-2 rounded-xl"><RutherfordAtom className="w-6 h-6" color="white" /></div>
+          <div><h1 className="font-black text-xl leading-none">Atom Master</h1><span className="text-emerald-600 text-[10px] font-black uppercase tracking-widest">NIVEL {level}</span></div>
         </div>
-        <div className="lg:col-span-4">
-           <div className="h-full bg-emerald-600 rounded-3xl p-6 text-white flex flex-col justify-center relative overflow-hidden shadow-xl shadow-emerald-200">
-              <Sparkles className="absolute top-2 right-2 opacity-20 w-12 h-12" />
-              <div className="relative z-10">
-                <h4 className="text-xs font-black uppercase tracking-widest mb-2 text-emerald-200">Objetivo Actual</h4>
-                <p className="text-2xl font-bold leading-tight">Completa los huecos para ganar la estrella #{stars + 1}</p>
-              </div>
-           </div>
+        <div className="flex gap-4">
+          <div className="bg-slate-50 px-4 py-2 rounded-2xl border border-slate-100 flex items-center gap-2">
+            <Star size={16} className="text-yellow-400 fill-yellow-400" />
+            <span className="font-black text-slate-700">{stars}</span>
+          </div>
+          <div className="bg-rose-50 px-4 py-2 rounded-2xl border border-rose-100 flex items-center gap-2">
+            <X size={16} className="text-rose-500" />
+            <span className="font-black text-rose-700">{failures}</span>
+          </div>
         </div>
       </div>
 
-      <div className="w-full max-w-5xl bg-white rounded-[2rem] shadow-2xl border-4 border-slate-100 overflow-hidden mb-6">
-          <div className="overflow-x-auto">
-            {/* Se ha eliminado la primera columna de ancho 60px y el contenedor min-w se ajusta a 700px */}
-            <div className="min-w-[700px] grid grid-cols-[1.5fr_1fr_0.8fr_0.8fr_0.8fr_0.8fr_0.8fr_1fr]">
-              {/* Eliminada celda Header # */}
-              <HeaderCell label="Nombre" />
-              <HeaderCell label="Símbolo" />
-              <HeaderCell label="Z" />
-              <HeaderCell label="A" />
-              <HeaderCell label="P" />
-              <HeaderCell label="E" />
-              <HeaderCell label="N" />
-              <HeaderCell label="Carga" />
+      <div className="mb-6 bg-white p-4 rounded-2xl border border-slate-200">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-xs font-black uppercase tracking-widest flex items-center gap-2 text-slate-500"><BookOpen size={14} /> Fórmulas Básicas</h3>
+          <button onClick={() => setShowInfo(!showInfo)} className="text-[10px] bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full font-bold">{showInfo ? 'Cerrar' : 'Ayuda'}</button>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <FormulaBadge label="A" formula="Z + N" />
+          <FormulaBadge label="Carga" formula="P - E" />
+          <FormulaBadge label="N" formula="A - Z" />
+        </div>
+        {showInfo && <div className="mt-4"><Glossary /></div>}
+      </div>
 
-              <div className="contents" key={currentIndex}>
-                {/* Eliminada celda de número de ejercicio */}
-                <Cell field="name" question={currentQuestion} userInput={userInput} onChange={handleInputChange} isResult={feedback !== null} shouldFocus={firstHiddenField() === 'name'} />
-                <Cell field="symbol" question={currentQuestion} userInput={userInput} onChange={handleInputChange} isResult={feedback !== null} shouldFocus={firstHiddenField() === 'symbol'} isSymbolColumn />
-                <Cell field="z" question={currentQuestion} userInput={userInput} onChange={handleInputChange} isResult={feedback !== null} shouldFocus={firstHiddenField() === 'z'} />
-                <Cell field="a" question={currentQuestion} userInput={userInput} onChange={handleInputChange} isResult={feedback !== null} shouldFocus={firstHiddenField() === 'a'} />
-                <Cell field="p" question={currentQuestion} userInput={userInput} onChange={handleInputChange} isResult={feedback !== null} shouldFocus={firstHiddenField() === 'p'} />
-                <Cell field="e" question={currentQuestion} userInput={userInput} onChange={handleInputChange} isResult={feedback !== null} shouldFocus={firstHiddenField() === 'e'} />
-                <Cell field="n" question={currentQuestion} userInput={userInput} onChange={handleInputChange} isResult={feedback !== null} shouldFocus={firstHiddenField() === 'n'} />
-                <Cell field="charge" question={currentQuestion} userInput={userInput} onChange={handleInputChange} isResult={feedback !== null} shouldFocus={firstHiddenField() === 'charge'} />
-              </div>
+      <div className="bg-white rounded-3xl shadow-xl border-2 border-slate-100 overflow-hidden mb-6">
+        <div className="overflow-x-auto">
+          <div className="min-w-[700px] grid grid-cols-[1.5fr_1fr_0.8fr_0.8fr_0.8fr_0.8fr_0.8fr_1fr]">
+            <HeaderCell label="Nombre" />
+            <HeaderCell label="Símbolo" />
+            <HeaderCell label="Z" />
+            <HeaderCell label="A" />
+            <HeaderCell label="P" />
+            <HeaderCell label="E" />
+            <HeaderCell label="N" />
+            <HeaderCell label="Carga" />
+
+            <div className="contents" key={currentIndex}>
+              <Cell field="name" question={currentQuestion} userInput={userInput} onChange={handleInputChange} isResult={feedback !== null} shouldFocus={firstHiddenField() === 'name'} />
+              <Cell field="symbol" question={currentQuestion} userInput={userInput} onChange={handleInputChange} isResult={feedback !== null} shouldFocus={firstHiddenField() === 'symbol'} isSymbolColumn />
+              <Cell field="z" question={currentQuestion} userInput={userInput} onChange={handleInputChange} isResult={feedback !== null} shouldFocus={firstHiddenField() === 'z'} />
+              <Cell field="a" question={currentQuestion} userInput={userInput} onChange={handleInputChange} isResult={feedback !== null} shouldFocus={firstHiddenField() === 'a'} />
+              <Cell field="p" question={currentQuestion} userInput={userInput} onChange={handleInputChange} isResult={feedback !== null} shouldFocus={firstHiddenField() === 'p'} />
+              <Cell field="e" question={currentQuestion} userInput={userInput} onChange={handleInputChange} isResult={feedback !== null} shouldFocus={firstHiddenField() === 'e'} />
+              <Cell field="n" question={currentQuestion} userInput={userInput} onChange={handleInputChange} isResult={feedback !== null} shouldFocus={firstHiddenField() === 'n'} />
+              <Cell field="charge" question={currentQuestion} userInput={userInput} onChange={handleInputChange} isResult={feedback !== null} shouldFocus={firstHiddenField() === 'charge'} />
             </div>
           </div>
+        </div>
       </div>
 
-      <div className="w-full max-w-5xl flex flex-col md:flex-row justify-between items-start gap-6">
-           <div className="flex-1 space-y-4 w-full">
-             {feedback === 'correct' && (
-                <div className="flex items-center gap-4 bg-emerald-50 border-2 border-emerald-200 p-4 rounded-2xl animate-in slide-in-from-left-4 duration-300">
-                  <div className="bg-emerald-500 text-white p-2 rounded-xl">
-                    <Check size={24} />
-                  </div>
-                  <div>
-                    <h4 className="font-black text-emerald-900 leading-none mb-1">¡IMPECABLE!</h4>
-                    <p className="text-emerald-700 text-xs">Has calculado los valores correctamente.</p>
-                  </div>
-                </div>
-             )}
-             {feedback === 'incorrect' && (
-               <div className="flex flex-col gap-3 w-full animate-in slide-in-from-left-4 duration-300">
-                 <div className="flex items-center gap-4 bg-rose-50 border-2 border-rose-200 p-4 rounded-2xl">
-                    <div className="bg-rose-500 text-white p-2 rounded-xl">
-                      <X size={24} />
-                    </div>
-                    <div>
-                      <h4 className="font-black text-rose-900 leading-none mb-1">HAY ALGÚN ERROR</h4>
-                      <p className="text-rose-700 text-xs">Revisa las fórmulas o pide ayuda a la IA.</p>
-                    </div>
-                 </div>
-                 <button 
-                  onClick={askGemini} 
-                  disabled={aiLoading}
-                  className="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-2xl transition-all shadow-lg active:scale-95 disabled:opacity-50"
-                 >
-                   {aiLoading ? <Loader2 className="animate-spin" size={20} /> : <Sparkles size={20} />}
-                   {aiLoading ? 'Pensando...' : 'Explicación de Gemini'}
-                 </button>
-               </div>
-             )}
-
-             {aiExplanation && (
-               <div className="bg-indigo-50 border border-indigo-100 p-5 rounded-3xl text-indigo-900 text-sm leading-relaxed animate-in fade-in zoom-in-95">
-                 <div className="flex items-center gap-2 mb-2">
-                   <Sparkles size={16} className="text-indigo-600" />
-                   <span className="font-black uppercase tracking-widest text-[10px]">Profesor IA:</span>
-                 </div>
-                 {aiExplanation}
-               </div>
-             )}
-           </div>
-
-           <div className="md:w-auto w-full flex justify-end">
-             {feedback === null ? (
-               <button onClick={checkAnswer} className="w-full md:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-black py-5 px-12 rounded-[2rem] shadow-2xl shadow-emerald-200 transition-all flex items-center justify-center gap-3 transform active:scale-95 text-lg">
-                COMPROBAR <Play size={24} className="fill-current" />
-              </button>
-             ) : (
-               <button onClick={nextQuestion} className={`w-full md:w-auto font-black py-5 px-12 rounded-[2rem] shadow-2xl transition-all flex items-center justify-center gap-3 transform active:scale-95 text-lg ${feedback === 'correct' ? 'bg-emerald-600 shadow-emerald-200 text-white' : 'bg-slate-900 text-white shadow-slate-200'}`} autoFocus>
-                {stars >= GOAL_STARS ? 'FINALIZAR' : 'SIGUIENTE'} <ArrowRight size={24} />
-              </button>
-             )}
+      <div className="space-y-4">
+        {feedback === 'correct' && (
+          <div className="bg-emerald-50 border-2 border-emerald-100 p-4 rounded-2xl flex items-center gap-3 text-emerald-700 font-bold">
+            <Check className="text-emerald-500" /> ¡Correcto! Has ganado una estrella.
           </div>
+        )}
+        {feedback === 'incorrect' && (
+          <div className="space-y-3">
+            <div className="bg-rose-50 border-2 border-rose-100 p-4 rounded-2xl flex items-center gap-3 text-rose-700 font-bold">
+              <X className="text-rose-500" /> Hay errores. Revisa las fórmulas.
+            </div>
+            <button onClick={askGemini} disabled={aiLoading} className="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2">
+              {aiLoading ? <Loader2 className="animate-spin" /> : <Sparkles />} Explicación IA
+            </button>
+            {aiExplanation && <div className="bg-slate-50 p-4 rounded-xl text-slate-700 text-sm italic">{aiExplanation}</div>}
+          </div>
+        )}
+
+        <div className="flex justify-end">
+          {feedback === null ? (
+            <button onClick={checkAnswer} className="bg-emerald-600 text-white font-black py-4 px-12 rounded-2xl shadow-lg hover:scale-105 active:scale-95 transition-all">COMPROBAR</button>
+          ) : (
+            <button onClick={nextQuestion} className="bg-slate-900 text-white font-black py-4 px-12 rounded-2xl shadow-lg flex items-center gap-2">SIGUIENTE <ArrowRight size={20} /></button>
+          )}
+        </div>
       </div>
     </div>
   );
 }
 
 const HeaderCell = ({ label }: { label: string }) => (
-  <div className="bg-slate-900 h-14 flex items-center justify-center border-r border-white/10 last:border-r-0">
-    <span className="font-black text-white text-[11px] uppercase tracking-[0.2em]">{label}</span>
+  <div className="bg-slate-900 h-12 flex items-center justify-center border-r border-white/10">
+    <span className="font-black text-white text-[10px] uppercase tracking-widest">{label}</span>
   </div>
 );
 
-const IsotopeDisplay = ({ symbol, a, z, charge, hiddenA, hiddenZ }: { symbol: string, a: number, z: number, charge: string, hiddenA: boolean, hiddenZ: boolean }) => {
-  const chargeDisplay = charge === '0' ? '' : charge;
-  return (
-    <div className="inline-flex items-center select-none">
-      <div className="flex flex-col text-[9px] leading-[9px] mr-1 text-right font-black text-slate-500">
-        <span className="mb-[2px]">{hiddenA ? '?' : a}</span>
-        <span>{hiddenZ ? '?' : z}</span>
-      </div>
-      <span className="text-2xl font-serif font-black text-slate-900 leading-none">{symbol.replace(/[\d\+\-]+/g, '')}</span>
-      <span className="text-[11px] font-black text-emerald-600 self-start ml-0.5 -mt-1">{chargeDisplay}</span>
+const IsotopeDisplay = ({ symbol, a, z, charge, hiddenA, hiddenZ }: { symbol: string, a: number, z: number, charge: string, hiddenA: boolean, hiddenZ: boolean }) => (
+  <div className="inline-flex items-center">
+    <div className="flex flex-col text-[10px] leading-[10px] mr-1 text-right font-black text-slate-400">
+      <span>{hiddenA ? '?' : a}</span>
+      <span>{hiddenZ ? '?' : z}</span>
     </div>
-  );
-};
+    <span className="text-2xl font-black text-slate-900">{symbol.replace(/[\d\+\-]+/g, '')}</span>
+    <span className="text-[10px] font-black text-emerald-600 self-start ml-0.5">{charge === '0' ? '' : charge}</span>
+  </div>
+);
 
 interface CellProps {
   field: keyof UserInput;
@@ -496,57 +395,41 @@ const Cell: React.FC<CellProps> = ({ field, question, userInput, onChange, isRes
       const nu = u.trim().toLowerCase();
       const nc = c.trim().toLowerCase();
       if ((nu === '0' || nu === 'neutro') && nc === '0') return true;
-      const normU = nu.replace(/[^0-9+-]/g, '');
-      const normC = nc.replace(/[^0-9+-]/g, '');
-      const sortStr = (s: string) => s.split('').sort().join('');
-      return sortStr(normU) === sortStr(normC);
+      return nu.replace(/[^0-9+-]/g, '') === nc.replace(/[^0-9+-]/g, '');
     }
     return u.toLowerCase().trim() === c.toLowerCase().trim();
   };
 
   const isError = isResult && isHidden && !checkEquality(userValue, correctValue);
-  const containerClasses = "p-4 flex items-center justify-center border-r border-slate-50 last:border-r-0 h-24 relative transition-colors";
 
   if (!isHidden) {
     return (
-      <div className={`${containerClasses} bg-white`}>
+      <div className="p-4 flex items-center justify-center border-r border-slate-50 h-20 bg-white">
         {isSymbolColumn ? (
            <IsotopeDisplay symbol={question.symbol} a={question.a} z={question.z} charge={question.charge} hiddenA={question.hiddenFields.includes('a')} hiddenZ={question.hiddenFields.includes('z')} />
         ) : (
-          <span className={`text-slate-900 font-bold ${field === 'symbol' ? 'text-2xl font-serif' : 'text-base'}`}>
-            {field === 'charge' && correctValue === '0' ? '0' : correctValue}
-          </span>
+          <span className="text-slate-900 font-bold">{field === 'charge' && correctValue === '0' ? '0' : correctValue}</span>
         )}
       </div>
     );
   }
 
   return (
-    <div className={`${containerClasses} ${isResult ? 'bg-white' : 'bg-emerald-50/50'}`}>
+    <div className={`p-4 flex items-center justify-center border-r border-slate-50 h-20 ${isResult ? 'bg-white' : 'bg-emerald-50/30'}`}>
       {isResult ? (
-        <div className="flex flex-col items-center w-full leading-tight">
-            <div className={`text-base font-black ${isError ? 'text-rose-500 line-through decoration-2' : 'text-emerald-600'}`}>
-                {userValue || <span className="text-slate-300 italic opacity-50 text-xs">Vacío</span>}
-            </div>
-            {isError && (
-                <div className="text-[11px] text-emerald-600 font-black bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100 mt-2 shadow-sm">
-                    {correctValue === '0' ? '0' : correctValue}
-                </div>
-            )}
+        <div className="text-center">
+            <div className={`font-black ${isError ? 'text-rose-500 line-through' : 'text-emerald-600'}`}>{userValue || '?'}</div>
+            {isError && <div className="text-[10px] text-emerald-600 font-bold mt-1">{correctValue === '0' ? '0' : correctValue}</div>}
         </div>
       ) : (
-        <div className="w-full px-1">
-            <input
-              type="text"
-              value={userInput[field]}
-              onChange={(e) => onChange(field, e.target.value)}
-              placeholder="?"
-              autoComplete="off"
-              autoFocus={shouldFocus}
-              aria-label={`Ingresa el ${field} del átomo`}
-              className={`w-full h-12 text-center bg-white border-2 border-emerald-100 rounded-xl focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all font-black text-lg text-emerald-900 placeholder-emerald-200 shadow-inner ${isSymbolColumn ? 'font-serif' : ''}`}
-            />
-        </div>
+        <input
+          type="text"
+          value={userInput[field]}
+          onChange={(e) => onChange(field, e.target.value)}
+          placeholder="?"
+          autoFocus={shouldFocus}
+          className="w-full text-center bg-white border-2 border-emerald-100 rounded-lg py-2 focus:border-emerald-500 outline-none font-bold"
+        />
       )}
     </div>
   );
