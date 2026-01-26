@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { getQuestions } from './data';
 import { Question, GameState, UserInput, ElementData } from './types';
 import { 
-  Beaker, Check, ChevronRight, RotateCcw, Trophy, X, 
+  Check, ChevronRight, RotateCcw, Trophy, X, 
   ArrowRight, ArrowLeft, Play, Star, HelpCircle, 
   Sparkles, Loader2, Info, BookOpen
 } from 'lucide-react';
@@ -13,6 +13,32 @@ import { GoogleGenAI } from "@google/genai";
 const LEVEL_1_LIMIT = 30;
 const LEVEL_2_LIMIT = 50;
 const GOAL_STARS = 10;
+
+// Componente de Átomo de Rutherford personalizado
+const RutherfordAtom = ({ className = "w-12 h-12", color = "currentColor" }: { className?: string, color?: string }) => (
+  <svg 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke={color} 
+    strokeWidth="1.5" 
+    strokeLinecap="round" 
+    strokeLinejoin="round" 
+    className={className}
+  >
+    {/* Nucleus */}
+    <circle cx="12" cy="12" r="2.5" fill={color} />
+    
+    {/* Orbits */}
+    <ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(0 12 12)" />
+    <ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)" />
+    <ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(120 12 12)" />
+    
+    {/* Electrons */}
+    <circle cx="22" cy="12" r="0.8" fill={color} />
+    <circle cx="7" cy="16.3" r="0.8" fill={color} />
+    <circle cx="7" cy="7.7" r="0.8" fill={color} />
+  </svg>
+);
 
 function shuffleArray<T>(array: T[]): T[] {
   const newArr = [...array];
@@ -116,7 +142,6 @@ function App() {
   const normalizeCharge = (val: string) => {
     const v = val.trim().toLowerCase();
     if (!v || v === '0' || v === 'neutro') return '0';
-    // Si el usuario escribe '+1' o '1+' o '1+', normalizar a '1+'
     const match = v.match(/^([+-])?(\d+)([+-])?$/);
     if (match) {
       const num = match[2];
@@ -212,11 +237,11 @@ function App() {
       <div className="min-h-screen bg-gradient-to-br from-emerald-700 via-emerald-600 to-teal-800 flex items-center justify-center p-6">
         <div className="bg-white rounded-[2.5rem] shadow-2xl p-10 max-w-lg w-full text-center border-8 border-white/20 glass-card relative overflow-hidden">
           <div className="absolute top-0 right-0 p-4 opacity-10">
-             <Beaker size={120} />
+             <RutherfordAtom className="w-32 h-32" color="#10b981" />
           </div>
           <div className="flex justify-center mb-8">
             <div className="bg-emerald-100 p-6 rounded-3xl rotate-3 shadow-inner">
-              <Beaker className="w-16 h-16 text-emerald-600" />
+              <RutherfordAtom className="w-16 h-16" color="#059669" />
             </div>
           </div>
           <h1 className="text-4xl font-black text-emerald-900 mb-2 tracking-tight">Atom Master</h1>
@@ -290,7 +315,7 @@ function App() {
              </button>
              <div className="flex items-center gap-3 border-l-2 border-emerald-100 pl-4">
                  <div className="bg-emerald-600 p-2 rounded-xl text-white">
-                    <Beaker size={24} />
+                    <RutherfordAtom className="w-6 h-6" color="white" />
                  </div>
                  <div>
                     <h1 className="text-slate-900 font-black text-xl leading-none">Atom Master</h1>
