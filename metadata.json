@@ -1,5 +1,5 @@
 {
-  "name": "Atoms (ZAPEN)",
-  "description": "An interactive chemistry exercise for completing atomic structure tables. Includes two levels: Neutral Atoms and Ions.",
+  "name": "Atom Master - Química Interactiva",
+  "description": "Una herramienta pedagógica para practicar la estructura atómica con retroalimentación en tiempo real e inteligencia artificial de Gemini.",
   "requestFramePermissions": []
 }
